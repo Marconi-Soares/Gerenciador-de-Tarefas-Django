@@ -1,0 +1,13 @@
+{% extends 'containerPrincipal.html' %} 
+
+{% block titulo_do_documento %} Novo Grupo {% endblock titulo_do_documento %}
+
+{% block botao %} <a href="{% url 'pagina-inicial' %}">Voltar</a>{% endblock botao %}
+
+{% block cabecalho %} 
+    <form id="cabecalho-form" method="post">
+        {{ form.nome }}
+       <input type="submit">
+        {% csrf_token %}
+    </form>
+{% endblock cabecalho %}

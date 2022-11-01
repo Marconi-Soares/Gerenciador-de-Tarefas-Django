@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <div id="botao">
+        {% block botao %}
+        {% endblock botao %}
+    </div>
+    
+    <div id="container-principal">        
+        <div id="cabecalho">
+            {% block cabecalho %} {% endblock cabecalho %}
+        </div>
+        
+        <div id="conteudo">
+            {% block conteudo %} {% endblock conteudo %}
+        </div>
+
+    </div>
+{% endblock main %}

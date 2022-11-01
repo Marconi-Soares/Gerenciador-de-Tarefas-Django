@@ -1,0 +1,52 @@
+{% extends 'containerPrincipal.html' %} 
+
+{% block titulo_do_documento %} {{ grupo.nome }} {% endblock titulo_do_documento %}
+
+{% block botao %} <a href="{% url 'pagina-inicial' %}">Inicio</a>{% endblock botao %}
+
+{% block cabecalho %} <h1>{{ grupo.nome|truncatewords:5 }} {{ teste }}</h1>  {% endblock cabecalho %}
+
+{% block conteudo %}
+    <div id="grid-grupo-detail">
+        <div id="subtarefas">
+            
+            <h4 id="tarefas">Tarefas</h4>
+
+            <form class="grupo-edit-form" action="{% url 'grupo'  grupo.id %}" method="post"> 
+                <input type="text" placeholder="Titulo da subtarefa..." name="titulo" required="true">
+                <input type="submit" value="Criar">
+            
+                {% csrf_token %}
+            </form>
+
+            {% for subtarefa in lista_de_subtarefas %} 
+                <div class="subtarefa-lista">
+                    <a href="">
+                        <p class="subtarefa-item"> {{ subtarefa.titulo }}</p>
+                        <p>{{ subtarefa.id }}</p>
+                    </a>
+                </div>
+                
+            {% endfor %}
+        </div>
+
+        <div id="usuarios">
+            <h5 id="membros">Membros</h5>
+            <form action="{% url 'grupo' grupo.id %}" method="post" class="grupo-edit-form">
+                {{ add_usuario_form.nome }}
+                <input type="submit" value="+">
+                {% csrf_token %}
+            </form>
+            {{ add_usuario_form.errors.nome }}
+            
+            <ul id="lista-usuarios">
+                {% for usuario in lista_de_usuarios %}
+                    <li>{{ usuario.username }}</li>
+                
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+
+{% endblock conteudo %} 

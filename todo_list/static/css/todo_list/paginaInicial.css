@@ -1,0 +1,83 @@
+/*PESQUISA*/
+#cabecalho-form > input {
+    outline: none;
+    border: none;
+    padding: 10px;
+}
+
+#cabecalho-form > :first-child {
+   font-weight: bold;
+   margin-right: -3px;
+}
+
+#cabecalho-form > input + input {
+    border-radius: 0px 10px 10px 0px;
+}
+#cabecalho-form > input + input:hover {
+    cursor: pointer;
+}
+
+/*CRIAR CONTAINER*/
+#criar-container {
+    height: 50px;
+    padding: 15px;
+    border-radius: 0 15px 0 0;
+
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    background-color: rgb(116, 153, 165);
+}
+
+#criar-container > a {
+    color: white;
+}
+
+#criar-container > a:hover {
+    color: lightblue;
+}
+
+.subtitulo-pagina-inicial {
+    color: grey;
+    margin-top: -20px;
+}
+
+.lista-pagina-inicial {
+    background-color: rgb(150, 189, 202);
+    max-width: 500px;
+    margin: auto;
+    border-radius: 10px;
+    transition: 200ms;
+}
+
+.lista-pagina-inicial:hover {
+    background-color: rgb(116, 153, 165);
+}
+
+.lista-pagina-inicial > a > .item-titulo {
+    padding: 10px;
+    color: black;
+}
+
+#grupos-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr 1fr;
+    width: 80%;
+    margin: 10px auto;
+}
+
+.grupo {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.grupo > p {
+    margin: -25px 10px 10px;
+    width: fit-content;
+    color: rgba(0, 0, 0, 0.678);
+}
+
+

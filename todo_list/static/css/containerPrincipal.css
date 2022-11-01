@@ -1,0 +1,38 @@
+#botao {
+    padding: 10px;
+    background-color: lightblue;
+    width: 100px;
+    text-align: center;
+    border-radius: 15px 15px 0 0;
+    box-shadow: 0 0 3px 0 gray;
+}
+
+#botao > a {
+    color: white;
+}
+
+#botao > a:hover {
+    color: gray;
+}
+
+#container-principal {
+    margin: -1px auto;
+    max-width: 800px;
+    background-color: lightblue;
+    border-radius: 0 15px 15px 15px;
+    box-shadow: 0 0 3px 0 gray;
+}
+
+#cabecalho {
+    height: 50px;
+    background-color: rgb(150, 189, 202);
+    padding: 15px 0px 15px 15px;
+    border-radius: 0 15px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#conteudo {
+    padding: 0 30px;
+}

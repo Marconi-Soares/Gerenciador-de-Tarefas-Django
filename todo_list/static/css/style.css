@@ -1,0 +1,10 @@
+/* rgb(150, 189, 202) */
+a {
+    text-decoration: none;
+    transition: 200ms;
+}
+
+main {
+    margin: 100px auto;
+    max-width: 800px
+}

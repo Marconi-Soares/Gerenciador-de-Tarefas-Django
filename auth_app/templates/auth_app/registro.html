@@ -1,0 +1,35 @@
+{% extends 'auth_app/base.html' %}
+
+{% block titulo %} Registrar-se {% endblock titulo %} 
+
+{% block esquerda %}
+    <form class="auth-form" method="post">
+        <input type="text" name="username" placeholder="Usuário">
+        <input type="password" name="password1" placeholder="Senha...">
+        <input type="password" name="password2" placeholder="Confirme sua senha...">
+        <input type="submit" value="Cadastrar">
+        
+        {% csrf_token %}
+    </form>
+    {% for campo in form %}
+        
+        {% if campo.errors %}
+            {{ campo.errors }}
+
+        {% endif %}
+
+    {% endfor %}
+    <p id="link">Já possui uma conta? <a href="{% url 'login' %}">Entre</a></p>
+    
+
+{% endblock esquerda %}
+
+{% block direita %} 
+<div id="side-text">
+    <h1>É de Graça!</h1>
+    <p>Registre-se agora e comece a se organizar!</p>
+    <p><i>Pitagoras</i></p>
+</div>
+
+{% endblock direita %} 
+

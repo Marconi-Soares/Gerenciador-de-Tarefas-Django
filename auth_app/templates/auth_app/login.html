@@ -1,0 +1,23 @@
+{% extends 'auth_app/base.html' %}
+
+{% block titulo %} Entrar {% endblock titulo %}
+
+{% block esquerda %} 
+    <form class="auth-form" method="post">
+        <input type="text" name="username" placeholder="Usuário..." required="true">
+        <input type="password" name="password" placeholder="Senha..." required="true">
+        <input type="submit" value="Entrar">
+        
+        {% csrf_token %}
+    </form>
+    {{ form.non_field_errors }}
+    <p id="link">Não tem uma conta? <a href="{% url 'registrar' %}">Registre-se</a></p>
+{% endblock esquerda %} 
+
+{% block direita %}
+    <div id="side-text">
+        <h1>Bem Vindo!</h1>
+        <p>"Com organização e tempo, acha-se o segredo de fazer tudo e bem feito."</p>
+        <p><i>Pitagoras</i></p>
+    </div>
+{% endblock direita %}

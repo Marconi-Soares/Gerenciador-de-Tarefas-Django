@@ -1,0 +1,58 @@
+{% extends 'containerPrincipal.html' %} 
+
+{% block titulo_do_documento %} Página Inicial {% endblock titulo_do_documento %}
+
+{% block botao %} <a href="{% url 'logout' %}">Sair</a> {% endblock botao %}
+
+{% block cabecalho %} 
+    <form id="cabecalho-form" action="." method="get">
+        <input type="search" placeholder="Pesquisar tarefa..."  name="pesquisa" value="{{ pesquisa }}">
+        <input type="submit" value="Buscar">
+    </form>
+
+    <div id="criar-container">
+        <a href="{% url 'criar-tarefa' %}">+ Tarefa</a>
+        <a href="{% url 'criar-grupo' %}">+ Grupo</a>
+    </div>
+
+{% endblock cabecalho %}
+
+{% block conteudo %} 
+    <h2 class="titulo-pagina-inicial">Tarefas</h2>
+    <p class="subtitulo-pagina-inicial">
+        <small><i>{{ numero_de_tarefas_incompletas }} tarefas incompletas</i></small>
+    </p>
+
+    {% for tarefa in lista_de_tarefas %} 
+        <div class="lista-pagina-inicial">
+            <a href="">
+                <p class="item-titulo"> {{ tarefa.titulo }}</p>
+            </a>
+        </div>
+
+        {% empty %} 
+            <p>Nenhuma tarefa foi encontrada</p>
+
+
+    {% endfor %}
+
+    <hr>
+    <h2 class="titulo-pagina-inicial">Grupos</h2>
+    <p class="subtitulo-pagina-inicial"><small><i>Tarefas em grupo</i></small></p>
+    
+    <div id="grupos-grid">
+        {% for grupo in lista_de_grupos %} 
+            <div class="lista-pagina-inicial grupo">
+                <a href="{% url 'grupo' grupo.id %}">
+                    <p class="item-titulo"> <b>{{ grupo.nome }}</b></p>
+                </a>
+                    <p><small>{{ grupo.subtarefas.count }} tarefas incompletas </small></p> 
+            </div>
+
+            {% empty %} 
+                <p>Nenhuma tarefa em grupo encontrada</p>
+
+
+        {% endfor %}
+    </div><br>
+{% endblock conteudo %}

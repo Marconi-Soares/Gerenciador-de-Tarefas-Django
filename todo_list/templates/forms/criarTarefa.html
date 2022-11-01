@@ -1,0 +1,13 @@
+{% extends 'containerPrincipal.html' %} 
+
+{% block titulo_do_documento %} Nova Tarefa {% endblock titulo_do_documento %}
+
+{% block botao %} <a href="{% url 'pagina-inicial' %}">Voltar</a> {% endblock botao %}
+
+{% block cabecalho %} 
+    <form id="cabecalho-form"action="" method="post">
+        {{ form.titulo }}
+        <input type="submit" value="Criar">
+        
+    {% csrf_token %}</form> 
+{% endblock cabecalho %}
