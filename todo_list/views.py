@@ -16,8 +16,8 @@ class PaginaInicial(LoginRequiredMixin, ListView):
         pesquisa = self.request.GET.get('pesquisa') or None
         context = super().get_context_data(**kwargs)
         usuario = self.request.user 
-        context['lista_de_tarefas'] = context['lista_de_tarefas'].filter(usuario=usuario)
-        context['numero_de_tarefas_incompletas'] = context['lista_de_tarefas'].count()
+        context['lista_de_tarefas'] = context['lista_de_tarefas'].filter(usuario=usuario).order_by('completo')
+        context['numero_de_tarefas_incompletas'] = context['lista_de_tarefas'].filter(completo=False).count()
         context['lista_de_grupos'] = usuario.grupo.all()
 
         if pesquisa:
@@ -39,6 +39,45 @@ class CriarTarefa(LoginRequiredMixin, CreateView):
         form.instance.usuario = self.get_current_user()
         return super().form_valid(form)
     
+
+class TarefaActions(LoginRequiredMixin, UpdateView):
+    model = Tarefa 
+    fields = [] 
+
+    #VERBOS
+    def get(self, request, *args: str, **kwargs):
+        return redirect('pagina-inicial')
+
+    def post(self, request, *args: str, **kwargs):
+        if self.is_dono_da_tarefa():
+            acao = kwargs['acao']
+            self.perform_acao(acao)
+
+        return redirect('pagina-inicial')
+
+    #VERIFICACOES
+    def is_dono_da_tarefa(self):
+        """
+        Retorna se o usuário da request é criador da tarefa.
+        """
+        tarefa = self.get_object()
+        
+        if tarefa.usuario == self.request.user:
+            return True
+        return False
+
+    #PEGADORES
+
+    #ACOES
+    def perform_acao(self, acao):
+        tarefa = self.get_object()
+
+        if acao == 'completar':
+            tarefa.completar()
+
+        elif acao == 'apagar':
+            tarefa.delete()
+
 
 class CriarGrupo(LoginRequiredMixin, CreateView):
     template_name = 'forms/criarGrupo.html'
@@ -114,8 +153,7 @@ class GrupoView(LoginRequiredMixin, UpdateView):
 
         context['grupo'] = grupo
         
-        context['lista_de_subtarefas'] = grupo.subtarefas.all().filter(completo=False)
-        context['lista_de_subtarefas_completas'] = grupo.subtarefas.filter(completo=True)
+        context['lista_de_subtarefas'] = grupo.subtarefas.all().order_by('completo')
         
         context['lista_de_usuarios'] = grupo.usuarios.all()
         context.setdefault('add_usuario_form', AddUsuarioForm())
@@ -135,19 +173,42 @@ class GrupoView(LoginRequiredMixin, UpdateView):
 
 class SubTarefaView(LoginRequiredMixin, UpdateView):
     model = SubTarefa
-    template_name = ''
+    fields = []
 
-    def getUsuario(self):
+    #VERBOS
+    def get(self, request, *args, **kwargs):
+        grupo = kwargs['grupo']
+        return redirect('grupo', pk=grupo)
+
+    def post(self, request, *args, **kwargs):
+        acao = kwargs['acao']
+
+        if self.is_membro():
+            self.perform_acao(acao)
+        
+
+        grupo = kwargs['grupo']
+        return redirect('grupo', pk=grupo)
+
+    #VERIFICAÇÕES
+    def is_membro(self):
+        grupo = self.get_object().grupo
+        usuario = self.get_usuario() 
+        return usuario.grupo.filter(pk=grupo.id).exists()
+
+    #PEGADORES
+    def get_usuario(self):
         return self.request.user
 
-    def get(self, request, *args: str, **kwargs):
-        grupo = kwargs['grupo_id']
-        
-        if self.is_membro(grupo):
-            return redirect('grupo', pk=grupo)
-        
-        return redirect('pagina-inicial')
 
-    def is_membro(self, grupo):
-        usuario = self.getUsuario() 
-        return usuario.grupo.filter(pk=grupo).exists()
+    #AÇÕES
+    def perform_acao(self, acao):
+        subtarefa = self.get_object()
+        usuario = self.get_usuario()
+
+        if acao == 'completar':
+            subtarefa.completar(usuario)
+            subtarefa.save()
+        
+        elif acao == 'apagar':
+            subtarefa.delete()

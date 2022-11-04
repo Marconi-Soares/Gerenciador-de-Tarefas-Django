@@ -24,6 +24,7 @@
 .grupo-edit-form {
     display: flex;
     justify-content: center;
+    margin-bottom: 10px;
 }
 
 .grupo-edit-form > input{
@@ -88,15 +89,27 @@
     margin-top: 10px;
 }
 
-.subtarefa-lista > a {
-    color: black;
-}
-.subtarefa-item {
-    background-color: rgb(116, 153, 165);
-    padding: 7px;
+.subtarefa-lista {
+    padding-left: 10px;
     border-radius: 0px 10px 10px 0px;
+    display: flex;
+    justify-content: space-between;
+    background-color: rgb(116, 153, 165);
 }
 
-.subtarefa-item:hover {
-    background-color: rgb(102, 136, 148);
+.subtarefa-lista + .subtarefa-lista {
+    margin-top: 15px;
+}
+
+.subtarefa-lista:hover {
+    background-color: rgb(108, 143, 153);
+}
+
+.subtarefa-completa {
+    text-decoration: line-through;
+}
+
+.subtarefa-creditos {
+    font-size: smaller;
+    text-align: start;
 }

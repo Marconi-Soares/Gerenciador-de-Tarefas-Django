@@ -42,17 +42,58 @@
     margin-top: -20px;
 }
 
+/*LISTAGEM*/
 .lista-pagina-inicial {
     background-color: rgb(150, 189, 202);
     max-width: 500px;
     margin: auto;
     border-radius: 10px;
     transition: 200ms;
+
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.tarefas-lista {
+    padding-left: 10px;
+}
+
+.tarefa-completa {
+    text-decoration: line-through;
 }
 
 .lista-pagina-inicial:hover {
     background-color: rgb(116, 153, 165);
 }
+
+.lista-item-acao  {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: rgb(99, 132, 143);
+    border-radius: 0 10px 10px 0;
+}
+
+.lista-item-acao > form > input {
+    border: none;
+    background-color: transparent;
+    color: white;
+    transition: 300ms;
+}
+
+.lista-item-acao > form > .apagar-tarefa:hover {
+    color: rgb(250, 117, 117);
+    cursor: pointer;
+}
+
+.lista-item-acao > form > .completar-tarefa:hover {
+    color: lightgreen;
+    cursor: pointer;
+}
+
+/*GRUPOS*/
 
 .lista-pagina-inicial > a > .item-titulo {
     padding: 10px;

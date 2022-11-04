@@ -6,7 +6,8 @@ urlpatterns = [
     path('criar-tarefa/', CriarTarefa.as_view(), name='criar-tarefa'),
     path('criar-grupo', CriarGrupo.as_view(), name='criar-grupo'),
 
-    path('grupo/<int:pk>', GrupoView.as_view(), name='grupo'),
-    path('grupo/<int:grupo_id>/subtarefa/<int:pk>/completar/', 
-    SubTarefaView.as_view(), name='completar-subtarefa'),
+    path('tarefa/<int:pk>/actions/<str:acao>', TarefaActions.as_view(), name='tarefa-actions'),
+
+    path('grupo/<int:pk>/', GrupoView.as_view(), name='grupo'),
+    path('grupo/<int:grupo>/subtarefa/<int:pk>/actions/<str:acao>', SubTarefaView.as_view(), name='subtarefa-actions')
 ]

@@ -24,10 +24,25 @@
     </p>
 
     {% for tarefa in lista_de_tarefas %} 
-        <div class="lista-pagina-inicial">
-            <a href="">
-                <p class="item-titulo"> {{ tarefa.titulo }}</p>
-            </a>
+        <div class="lista-pagina-inicial tarefas-lista">
+            {% if tarefa.completo %}
+                <p class="item-titulo tarefa-completa">{{ tarefa.titulo }}</p>
+            {% else %} 
+                <p class="item-titulo">{{ tarefa.titulo }}</p>
+            {% endif %}
+
+            <div class="lista-item-acao">
+                {% if not tarefa.completo %}
+                    <form action="{% url 'tarefa-actions' pk=tarefa.id acao='completar' %}" method="post" class="item-form-acao">
+                    {% csrf_token %}
+                        <input type="submit" value="Completar" class="completar-tarefa">
+                    </form>
+                {% endif %}
+
+                <form action="{% url 'tarefa-actions' pk=tarefa.id acao='apagar' %}" method="post" class="item-form-acao"> {% csrf_token %}
+                    <input type="submit" value="Apagar" class="apagar-tarefa">
+                </form>
+            </div>
         </div>
 
         {% empty %} 

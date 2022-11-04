@@ -20,12 +20,36 @@
             </form>
 
             {% for subtarefa in lista_de_subtarefas %} 
-                <div class="subtarefa-lista">
+                <!--<div class="subtarefa-lista">
                     <a href="">
                         <p class="subtarefa-item"> {{ subtarefa.titulo }}</p>
                         <p>{{ subtarefa.id }}</p>
                     </a>
+                </div>-->
+                <div class="subtarefa-lista">
+                    {% if subtarefa.completo %}
+                        <div>
+                            <p class="subtarefa-completa">{{ subtarefa.titulo }}</p>
+                            <p class="subtarefa-creditos">{{ subtarefa.completado_por }}</p>
+                        </div>
+                    {% else %} 
+                        <p>{{ subtarefa.titulo }}</p>
+                    {% endif %}
+        
+                    <div class="lista-item-acao">
+                        {% if not subtarefa.completo %}
+                            <form action="{% url 'subtarefa-actions' grupo=grupo.id pk=subtarefa.id acao='completar' %}" method="post" class="item-form-acao">
+                            {% csrf_token %}
+                                <input type="submit" value="Completar" class="completar-tarefa">
+                            </form>
+                        {% endif %}
+        
+                        <form action="{% url 'subtarefa-actions' grupo=grupo.id pk=subtarefa.id acao='apagar' %}" method="post" class="item-form-acao"> {% csrf_token %}
+                            <input type="submit" value="Apagar" class="apagar-tarefa">
+                        </form>
+                    </div>
                 </div>
+        
                 
             {% endfor %}
         </div>

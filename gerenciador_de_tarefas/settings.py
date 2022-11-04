@@ -101,7 +101,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGIN_URL = '/auth/'
+LOGIN_URL = '/auth/entrar/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
