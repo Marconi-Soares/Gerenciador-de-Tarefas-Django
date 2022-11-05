@@ -32,10 +32,15 @@ class Grupo(models.Model):
     class Meta:
         default_related_name='grupo'
 
-
     def __str__(self):
         return self.nome
 
+    def remover(self, usuario):
+        if usuario in self.usuarios.all():
+            self.usuarios.remove(usuario)
+
+    def contar_incompletas(self):
+        return int(self.subtarefas.filter(completo=False).count())
 
 class SubTarefa(TarefaBase):
     grupo = models.ForeignKey(Grupo, on_delete=models.CASCADE, related_name='subtarefas')
@@ -47,4 +52,5 @@ class SubTarefa(TarefaBase):
     def completar(self, usuario):
         self.completo = True
         self.completado_por = usuario
-
+        self.save()
+    

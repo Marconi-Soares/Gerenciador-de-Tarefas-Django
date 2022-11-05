@@ -1,3 +1,22 @@
+#cabecalho > #sair-do-grupo {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    padding: 15px;
+    border-radius: 0 15px 0 0;
+    background-color: rgb(116, 153, 165);
+}
+
+#sair-do-grupo > input {
+    background-color: transparent;
+    border: none;
+    color: white;
+}
+#sair-do-grupo > input:hover {
+    color: rgb(250, 117, 117);
+    cursor: pointer;
+}
+
 #grid-grupo-detail {
     display: grid;
     padding: 15px;

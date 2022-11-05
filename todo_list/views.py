@@ -171,7 +171,62 @@ class GrupoView(LoginRequiredMixin, UpdateView):
         return redirect('grupo', pk=grupo.id)
 
 
-class SubTarefaView(LoginRequiredMixin, UpdateView):
+class GrupoActions(LoginRequiredMixin, UpdateView):
+    model = Grupo
+    fields = []
+
+    def get(self, request, *args: str, **kwargs):
+        if self.is_membro():
+            return self.voltar_ao_grupo()
+    
+        return redirect('pagina-inicial')
+
+    def post(self, request, *args: str, **kwargs):
+        acao = kwargs['acao'] or None
+
+        if self.is_membro():
+            self.perform_acao(acao)
+            return self.voltar_ao_grupo()
+        
+        return redirect('pagina-inicial')
+            
+
+    # VERIFICAÇÕES
+    def is_membro(self):
+        grupo = self.get_object()
+        usuario = self.request.user
+        return usuario.grupo.filter(pk=grupo.id).exists()
+
+    def is_grupo_ativo(self):
+        grupo = self.get_object()
+        
+        if grupo.usuarios.all().count() > 1:
+            return True 
+        
+        self.apagar_grupo(grupo)
+
+    #AÇÕES
+    def voltar_ao_grupo(self):
+        grupo = self.get_object()
+        return redirect('grupo', pk=grupo.id)
+
+    def perform_acao(self, acao):
+        grupo = self.get_object()
+
+        if acao == 'criar-subtarefa':
+            titulo = self.request.POST.get('titulo')
+            self.criar_subtarefa(titulo=titulo)
+
+        elif acao == 'sair-do-grupo':
+            grupo.remover(self.request.user)
+            return redirect('pagina-inicial')
+
+    def criar_subtarefa(self, titulo):
+        grupo = self.get_object()
+        SubTarefa.objects.create(titulo=titulo, grupo=grupo)
+
+
+class SubTarefaActions(LoginRequiredMixin, UpdateView):
     model = SubTarefa
     fields = []
 
@@ -208,7 +263,6 @@ class SubTarefaView(LoginRequiredMixin, UpdateView):
 
         if acao == 'completar':
             subtarefa.completar(usuario)
-            subtarefa.save()
         
         elif acao == 'apagar':
             subtarefa.delete()

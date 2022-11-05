@@ -9,5 +9,7 @@ urlpatterns = [
     path('tarefa/<int:pk>/actions/<str:acao>', TarefaActions.as_view(), name='tarefa-actions'),
 
     path('grupo/<int:pk>/', GrupoView.as_view(), name='grupo'),
-    path('grupo/<int:grupo>/subtarefa/<int:pk>/actions/<str:acao>', SubTarefaView.as_view(), name='subtarefa-actions')
+
+    path('grupo/<int:pk>/actions/<str:acao>', GrupoActions.as_view(), name='grupo-actions'),
+    path('grupo/<int:grupo>/subtarefa/<int:pk>/actions/<str:acao>', SubTarefaActions.as_view(), name='subtarefa-actions')
 ]

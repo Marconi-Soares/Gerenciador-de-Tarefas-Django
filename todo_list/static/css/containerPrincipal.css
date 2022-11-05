@@ -1,7 +1,25 @@
+#lista-de-botoes {
+    display: flex;
+    justify-content: space-between;
+}
+
+#botoes-esquerda, #botoes-direita  {
+    display: flex;
+}
+
+#botoes-direita {
+    margin-right: 15px;
+}
+
+#lista-de-botoes > #botoes-esquerda > #botao + #botao,
+#lista-de-botoes > #botoes-direita > #botao + #botao {
+    margin-left: 10px;
+}
+
 #botao {
     padding: 10px;
     background-color: lightblue;
-    width: 100px;
+    width: fit-content;
     text-align: center;
     border-radius: 15px 15px 0 0;
     box-shadow: 0 0 3px 0 gray;
@@ -16,7 +34,7 @@
 }
 
 #container-principal {
-    margin: -1px auto;
+    margin: 1px auto;
     max-width: 800px;
     background-color: lightblue;
     border-radius: 0 15px 15px 15px;

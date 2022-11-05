@@ -4,7 +4,13 @@
 
 {% block botao %} <a href="{% url 'pagina-inicial' %}">Inicio</a>{% endblock botao %}
 
-{% block cabecalho %} <h1>{{ grupo.nome|truncatewords:5 }} {{ teste }}</h1>  {% endblock cabecalho %}
+{% block cabecalho %} 
+    <h1>{{ grupo.nome|truncatewords:5 }}</h1>
+    <form action="{% url 'grupo-actions' acao='sair-do-grupo' pk=grupo.id %}" id="sair-do-grupo" method="post">
+        <input type="submit" value="Sair do grupo">
+        {% csrf_token %}
+    </form>
+{% endblock cabecalho %}
 
 {% block conteudo %}
     <div id="grid-grupo-detail">
@@ -12,7 +18,7 @@
             
             <h4 id="tarefas">Tarefas</h4>
 
-            <form class="grupo-edit-form" action="{% url 'grupo'  grupo.id %}" method="post"> 
+            <form class="grupo-edit-form" action="{% url 'grupo-actions' acao='criar-subtarefa' pk=grupo.id %}" method="post"> 
                 <input type="text" placeholder="Titulo da subtarefa..." name="titulo" required="true">
                 <input type="submit" value="Criar">
             
@@ -20,12 +26,6 @@
             </form>
 
             {% for subtarefa in lista_de_subtarefas %} 
-                <!--<div class="subtarefa-lista">
-                    <a href="">
-                        <p class="subtarefa-item"> {{ subtarefa.titulo }}</p>
-                        <p>{{ subtarefa.id }}</p>
-                    </a>
-                </div>-->
                 <div class="subtarefa-lista">
                     {% if subtarefa.completo %}
                         <div>

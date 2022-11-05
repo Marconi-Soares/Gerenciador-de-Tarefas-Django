@@ -61,7 +61,7 @@
                 <a href="{% url 'grupo' grupo.id %}">
                     <p class="item-titulo"> <b>{{ grupo.nome }}</b></p>
                 </a>
-                    <p><small>{{ grupo.subtarefas.count }} tarefas incompletas </small></p> 
+                    <p><small>{{ grupo.contar_incompletas }} tarefas incompletas </small></p> 
             </div>
 
             {% empty %} 
