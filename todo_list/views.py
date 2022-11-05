@@ -1,4 +1,3 @@
-from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView
@@ -6,41 +5,53 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import AddUsuarioForm, TarefaModelForm, GrupoModelForm
 from .models import *
+from .utils import *
 
-class PaginaInicial(LoginRequiredMixin, ListView):
+class PaginaInicial(LoginRequiredMixin, ListView, TarefaUtil):
+    """
+    Página com acesso aos grupos e as tarefas.
+    """
     model = Tarefa
     context_object_name = 'lista_de_tarefas'
     template_name = 'todo_list/paginaInicial.html'
 
+    #PEGADORES
     def get_context_data(self, **kwargs):
-        pesquisa = self.request.GET.get('pesquisa') or None
-        context = super().get_context_data(**kwargs)
-        usuario = self.request.user 
-        context['lista_de_tarefas'] = context['lista_de_tarefas'].filter(usuario=usuario).order_by('completo')
-        context['numero_de_tarefas_incompletas'] = context['lista_de_tarefas'].filter(completo=False).count()
-        context['lista_de_grupos'] = usuario.grupo.all()
+        usuario = self.get_usuario()
+        tarefas_do_usuario = Tarefa.objects.filter(usuario=usuario)
 
-        if pesquisa:
+        context = {
+            'lista_de_tarefas': tarefas_do_usuario.order_by('completo'),
+            'numero_de_tarefas_incompletas': tarefas_do_usuario.filter(completo=False).count(),
+            'lista_de_grupos': usuario.grupo.all()
+        }
+       
+        pesquisa = self.request.GET.get('pesquisa') or None
+        if pesquisa is not None:
             context['pesquisa'] = pesquisa
-            context['lista_de_tarefas'] = context['lista_de_tarefas'].filter(titulo__icontains=pesquisa)
+            context['lista_de_tarefas'] = tarefas_do_usuario.filter(titulo__icontains=pesquisa)
 
         return context
 
 
-class CriarTarefa(LoginRequiredMixin, CreateView):
+class CriarTarefa(LoginRequiredMixin, CreateView, TarefaUtil):
+    """
+    View responsável por criar novas tarefas
+    """
     form_class = TarefaModelForm
     template_name = 'forms/criarTarefa.html'
     success_url = reverse_lazy('pagina-inicial')
 
-    def get_current_user(self):
-        return self.request.user
-
+    #AÇÕES
     def form_valid(self, form):
-        form.instance.usuario = self.get_current_user()
+        form.instance.usuario = self.get_usuario()
         return super().form_valid(form)
     
 
-class TarefaActions(LoginRequiredMixin, UpdateView):
+class TarefaActions(LoginRequiredMixin, UpdateView, TarefaUtil):
+    """
+    Ações relacionadas as tarefas
+    """
     model = Tarefa 
     fields = [] 
 
@@ -50,25 +61,12 @@ class TarefaActions(LoginRequiredMixin, UpdateView):
 
     def post(self, request, *args: str, **kwargs):
         if self.is_dono_da_tarefa():
-            acao = kwargs['acao']
+            acao = self.get_acao()
             self.perform_acao(acao)
 
         return redirect('pagina-inicial')
 
-    #VERIFICACOES
-    def is_dono_da_tarefa(self):
-        """
-        Retorna se o usuário da request é criador da tarefa.
-        """
-        tarefa = self.get_object()
-        
-        if tarefa.usuario == self.request.user:
-            return True
-        return False
-
-    #PEGADORES
-
-    #ACOES
+    #AÇÕES
     def perform_acao(self, acao):
         tarefa = self.get_object()
 
@@ -79,25 +77,27 @@ class TarefaActions(LoginRequiredMixin, UpdateView):
             tarefa.delete()
 
 
-class CriarGrupo(LoginRequiredMixin, CreateView):
+class CriarGrupo(LoginRequiredMixin, CreateView, GrupoUtil):
+    """
+    View responsável por criar novos grupos, adicionar o usuário da request neste e redirecioná-lo para uma detailview do grupo criado.
+    """
     template_name = 'forms/criarGrupo.html'
     form_class = GrupoModelForm
 
-    def get_success_url(self, pk):
-        self.success_url = f'grupo/{pk}'
-        return self.success_url
-
-
+    #AÇÕES
     def form_valid(self, form):
-        usuario = self.request.user
+        usuario = self.get_usuario()
 
-        self.object = form.save()
-        self.object.usuarios.add(usuario)
+        grupo = form.save()
+        grupo.usuarios.add(usuario)
 
-        return HttpResponseRedirect(self.get_success_url(self.object.id))
+        return self.get_grupo_url(grupo)
 
 
-class GrupoView(LoginRequiredMixin, UpdateView):
+class GrupoView(LoginRequiredMixin, UpdateView, GrupoUtil):
+    """
+    Uma view que permite acesso as subtarefas e os usuários de um grupo.
+    """
     model = Grupo
     form_class = GrupoModelForm
     template_name = 'todo_list/grupo.html'
@@ -105,56 +105,32 @@ class GrupoView(LoginRequiredMixin, UpdateView):
 
 # VERBOS
     def get(self, request, *args: str, **kwargs):
-
         if self.is_membro():
             return super().get(request, *args, **kwargs)
         
         return redirect('pagina-inicial')
 
     def post(self, request, *args: str, **kwargs):
-        if self.is_membro():
+        if not self.is_membro():
+            return self.get_grupo_url()
+        
+        nome_de_usuario = request.POST.get('nome')
+        form = AddUsuarioForm(self.request.POST)
+    
+        if form.is_valid():
+            self.add_usuario(nome_de_usuario)
+            return self.get_grupo_url()
 
-            titulo = request.POST.get('titulo')
-            nome_de_usuario = request.POST.get('nome')
-
-            if titulo:
-                self.criar_subtarefa(titulo)
-                return self.voltar_ao_grupo()  
-            
-            elif nome_de_usuario:
-                grupo = self.get_object()
-                form = AddUsuarioForm(self.request.POST)
-            
-                if form.is_valid():
-                    usuario = User.objects.get(username=nome_de_usuario)
-                    grupo.usuarios.add(usuario)
-                    return self.voltar_ao_grupo()
-
-                else: 
-                    return render(self.request, 'todo_list/grupo.html', self.get_context_data(add_usuario_form=form))
-
-            return self.voltar_ao_grupo()
-
-        return redirect('pagina-inicial')
-
-# VERIFICAÇÕES
-    def is_membro(self):
-        grupo = self.get_object()
-        usuario = self.get_usuario() 
-        return usuario.grupo.filter(pk=grupo.id).exists()
+        else: 
+            return render(self.request, 'todo_list/grupo.html', self.get_context_data(add_usuario_form=form))
 
 
-# PEGADORES
-    def get_usuario(self):
-        return self.request.user
-
+#PEGADORES
     def get_context_data(self, **context):
         grupo = self.get_object()
 
         context['grupo'] = grupo
-        
         context['lista_de_subtarefas'] = grupo.subtarefas.all().order_by('completo')
-        
         context['lista_de_usuarios'] = grupo.usuarios.all()
         context.setdefault('add_usuario_form', AddUsuarioForm())
         
@@ -162,99 +138,81 @@ class GrupoView(LoginRequiredMixin, UpdateView):
 
 
 # AÇÕES
-    def criar_subtarefa(self, titulo):
+    def add_usuario(self, nome_de_usuario):
         grupo = self.get_object()
-        SubTarefa.objects.create(titulo=titulo, grupo=grupo)
-
-    def voltar_ao_grupo(self):
-        grupo = self.get_object()
-        return redirect('grupo', pk=grupo.id)
+        usuario = User.objects.get(username=nome_de_usuario)
+        grupo.usuarios.add(usuario)
 
 
-class GrupoActions(LoginRequiredMixin, UpdateView):
+class GrupoActions(LoginRequiredMixin, UpdateView, GrupoUtil):
+    """
+    Ações relacionadas a um grupo.
+    """
     model = Grupo
     fields = []
 
+    #VERBOS
     def get(self, request, *args: str, **kwargs):
         if self.is_membro():
-            return self.voltar_ao_grupo()
+            return self.get_grupo_url()
     
         return redirect('pagina-inicial')
 
     def post(self, request, *args: str, **kwargs):
-        acao = kwargs['acao'] or None
+        acao = self.get_acao()
 
         if self.is_membro():
             self.perform_acao(acao)
-            return self.voltar_ao_grupo()
-        
+            return self.get_grupo_url()
+
         return redirect('pagina-inicial')
-            
-
-    # VERIFICAÇÕES
-    def is_membro(self):
-        grupo = self.get_object()
-        usuario = self.request.user
-        return usuario.grupo.filter(pk=grupo.id).exists()
-
-    def is_grupo_ativo(self):
-        grupo = self.get_object()
-        
-        if grupo.usuarios.all().count() > 1:
-            return True 
-        
-        self.apagar_grupo(grupo)
 
     #AÇÕES
-    def voltar_ao_grupo(self):
-        grupo = self.get_object()
-        return redirect('grupo', pk=grupo.id)
-
     def perform_acao(self, acao):
-        grupo = self.get_object()
-
         if acao == 'criar-subtarefa':
             titulo = self.request.POST.get('titulo')
             self.criar_subtarefa(titulo=titulo)
 
         elif acao == 'sair-do-grupo':
-            grupo.remover(self.request.user)
+            self.sair_do_grupo()
             return redirect('pagina-inicial')
 
     def criar_subtarefa(self, titulo):
+        """
+        Cria uma nova subtarefa
+        """
         grupo = self.get_object()
         SubTarefa.objects.create(titulo=titulo, grupo=grupo)
 
+    def sair_do_grupo(self):
+        """
+        Remove o usuário da request do grupo.
+        """
+        grupo = self.get_object()
+        usuario = self.get_usuario()
 
-class SubTarefaActions(LoginRequiredMixin, UpdateView):
+        grupo.remover(usuario)
+
+class SubTarefaActions(LoginRequiredMixin, UpdateView, TarefaGrupoUtil):
+    """
+    Ações relacionadas a subtarefas.
+    """
     model = SubTarefa
     fields = []
 
     #VERBOS
     def get(self, request, *args, **kwargs):
-        grupo = kwargs['grupo']
-        return redirect('grupo', pk=grupo)
+        grupo = self.get_object().grupo
+        return self.get_grupo_url(grupo)
 
     def post(self, request, *args, **kwargs):
-        acao = kwargs['acao']
+        acao = self.get_acao()
+        grupo = self.get_object().grupo
 
-        if self.is_membro():
+        if self.is_membro(grupo):
             self.perform_acao(acao)
         
-
-        grupo = kwargs['grupo']
-        return redirect('grupo', pk=grupo)
-
-    #VERIFICAÇÕES
-    def is_membro(self):
-        grupo = self.get_object().grupo
-        usuario = self.get_usuario() 
-        return usuario.grupo.filter(pk=grupo.id).exists()
-
-    #PEGADORES
-    def get_usuario(self):
-        return self.request.user
-
+        return self.get_grupo_url(grupo)
 
     #AÇÕES
     def perform_acao(self, acao):
