@@ -193,6 +193,7 @@ class GrupoActions(LoginRequiredMixin, UpdateView, GrupoUtil):
 
         grupo.remover(usuario)
 
+
 class SubTarefaActions(LoginRequiredMixin, UpdateView, TarefaGrupoUtil):
     """
     Ações relacionadas a subtarefas.

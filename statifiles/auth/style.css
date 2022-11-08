@@ -1,0 +1,96 @@
+a {
+    text-decoration: none;
+    transition: 200ms;
+}
+
+main {
+    margin: 100px auto;
+    max-width: 600px
+}
+
+#auth-grid {
+    border-radius: 15px;
+    background-color: rgb(150, 189, 202);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: fit-content;
+    padding-bottom: 10px;
+}
+
+#auth-grid > div + div {
+    background-color: black;
+    background-color: rgb(116, 153, 165);
+    margin-bottom: -10px;
+    border-radius: 0px 15px 15px 0;
+}
+
+.auth-form {
+    padding: 30px 0px 0px 30px;
+}
+
+.auth-form > input {
+    display: block;
+    margin-bottom: 15px;
+    max-width: 60%;
+    height: 30px;
+    padding: 5px 15px;
+    outline: none;
+    border-radius: 5px;
+    border: none;
+    transition: 300ms;
+}
+
+.auth-form > input:focus {
+    max-width: 80%;
+    background-color: rgb(224, 241, 247);
+}
+
+.auth-form > input[type="submit"] {
+    font: bold;
+}
+
+.auth-form > input[type="submit"]:hover {
+    cursor: pointer;
+    background-color: rgb(116, 153, 165);
+    color: white;
+}
+
+#link {
+    margin: 10px 0 0 30px;
+}
+
+#link > a {
+    color: rgba(0, 0, 0, 0.486);
+}
+
+
+
+/*SIDE*/
+
+#side-text {
+    padding: 30px 10px 30px 30px;
+    border-radius: 0 15px 15px 0;
+    height: fit-content;
+}
+
+#side-text > h1 {
+    margin-top: 0;
+    color: rgba(0, 0, 0, 0.712);
+}
+
+#side-text > p:first-of-type {
+    margin-bottom: 5px;
+    font-size: larger;
+}
+
+#side-text > p:last-of-type {
+    font-size: small;
+}
+
+.errorlist {
+    color: red;
+    list-style: none;
+    font-size: small;
+    padding-left: 30px;
+    margin-right: 10px;
+}

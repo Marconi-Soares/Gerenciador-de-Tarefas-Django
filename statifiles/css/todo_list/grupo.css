@@ -1,0 +1,134 @@
+#cabecalho > #sair-do-grupo {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    padding: 15px;
+    border-radius: 0 15px 0 0;
+    background-color: rgb(116, 153, 165);
+}
+
+#sair-do-grupo > input {
+    background-color: transparent;
+    border: none;
+    color: white;
+}
+#sair-do-grupo > input:hover {
+    color: rgb(250, 117, 117);
+    cursor: pointer;
+}
+
+#grid-grupo-detail {
+    display: grid;
+    padding: 15px;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+#grid-grupo-detail > div {
+    background-color: rgb(150, 189, 202);
+    padding: 10px;
+    border-radius: 10px;
+    transition: 300ms;
+}
+
+#grid-grupo-detail > div:hover {
+    box-shadow: 1px 1px 1px 1px rgb(116, 153, 165);
+    background-color: rgb(143, 182, 196);
+}
+
+#grid-grupo-detail > :last-child {
+    height: fit-content;
+}
+
+.grupo-edit-form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.grupo-edit-form > input{
+    outline: none;
+    border: none;
+    padding: 10px;
+}
+
+.grupo-edit-form > input[type=text] {
+    font-weight: bold;
+    margin-right: 1px;
+    width: 60%;
+}
+
+.grupo-edit-form > input[type=submit] {
+    border-radius: 0px 5px 5px 0px;
+    max-width: 40%;
+}
+
+.grupo-edit-form > input[type=submit]:hover {
+    cursor: pointer;
+}
+
+#membros {
+    margin: 5px 0;
+    text-align: center;
+}
+
+#tarefas {
+    margin: 5px 0;
+    text-align: center;    
+}
+
+.errorlist {
+    text-align: center;
+    padding: 0;
+    margin-top: 5px;
+
+    
+}
+
+.errorlist > li{
+    color: red;
+    list-style: none;
+    font-size: small;
+}
+
+#lista-usuarios {
+    padding: 0;
+    list-style: none;
+    font-size: small;
+
+}
+
+#lista-usuarios > li {
+    background-color: rgb(116, 153, 165);
+    padding: 3px 3px 3px 10px;
+    border-radius: 0 10px 10px 0;
+}
+
+#lista-usuarios > li + li {
+    margin-top: 10px;
+}
+
+.subtarefa-lista {
+    padding-left: 10px;
+    border-radius: 0px 10px 10px 0px;
+    display: flex;
+    justify-content: space-between;
+    background-color: rgb(116, 153, 165);
+}
+
+.subtarefa-lista + .subtarefa-lista {
+    margin-top: 15px;
+}
+
+.subtarefa-lista:hover {
+    background-color: rgb(108, 143, 153);
+}
+
+.subtarefa-completa {
+    text-decoration: line-through;
+}
+
+.subtarefa-creditos {
+    font-size: smaller;
+    text-align: start;
+}
